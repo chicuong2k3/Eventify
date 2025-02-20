@@ -1,0 +1,59 @@
+version: '3.9'
+
+services:
+  eventcatalog.database:
+    container_name: EventCatalog.Database
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: eventcatalog
+    volumes:
+      - ${PWD}/db-data/:/var/lib/postgresql/data/
+
+  pgadmin:
+    container_name: pgadmin4.container
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - 15433:80
+    depends_on:
+      - eventcatalog.database
+      
+ 
+  eventify.seq:
+    container_name: Eventify.Seq
+    restart: always
+    environment: 
+      - ACCEPT_EULA=Y
+    ports:
+      - 5341:5341
+      - 8081:80  
+
+  eventify.redis:
+    container_name: Eventify.Redis
+    restart: always
+    ports:
+      - 6379:6379
+
+  eventcatalog.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__Database=Host=eventcatalog.database;Database=eventcatalog;Username=postgres;Password=postgres;Trust Server Certificate=true
+      - ConnectionStrings__Cache=eventify.redis:6379
+    ports:
+      - "5000:8080"
+      - "5050:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    depends_on:
+      - eventcatalog.database
+      - eventify.redis
+

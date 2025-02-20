@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+  eventcatalog.database:
+    image: postgres:latest
+
+  eventify.seq:
+    image: datalust/seq:latest
+
+  pgadmin:
+    image: dpage/pgadmin4
+
+  eventify.redis:
+    image: redis:latest
+
+  eventcatalog.api:
+    image: ${DOCKER_REGISTRY-}eventcatalogapi
+    build:
+      context: ../..
+      dockerfile: Music/Eventify/EventCatalog/EventCatalog.Api/Dockerfile
+
