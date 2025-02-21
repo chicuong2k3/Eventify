@@ -1,6 +1,15 @@
 version: '3.9'
 
 services:
+  portainer:
+    container_name: portainer
+    restart: always
+    ports:
+      - 9000:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
   eventcatalog.database:
     container_name: EventCatalog.Database
     restart: always

@@ -1,6 +1,9 @@
 version: '3.9'
 
 services:
+  portainer:
+    image: portainer/portainer-ce:latest
+
   eventcatalog.database:
     image: postgres:latest
 
@@ -26,3 +29,5 @@ services:
       context: .
       dockerfile: Booking/Booking.Api/Dockerfile
 
+volumes:
+  portainer_data:
