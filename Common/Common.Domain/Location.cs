@@ -2,7 +2,7 @@
 
 public record Location
 {
-    private Location()
+    protected Location()
     {
     }
 
