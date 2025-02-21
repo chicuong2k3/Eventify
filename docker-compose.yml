@@ -10,7 +10,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4
 
-  eventify.redis:
+  booking.redis:
     image: redis:latest
 
   eventcatalog.api:
@@ -18,4 +18,11 @@ services:
     build:
       context: ../..
       dockerfile: Music/Eventify/EventCatalog/EventCatalog.Api/Dockerfile
+
+
+  booking.api:
+    image: ${DOCKER_REGISTRY-}bookingapi
+    build:
+      context: .
+      dockerfile: Booking/Booking.Api/Dockerfile
 

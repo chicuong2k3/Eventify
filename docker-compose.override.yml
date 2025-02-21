@@ -34,8 +34,8 @@ services:
       - 5341:5341
       - 8081:80  
 
-  eventify.redis:
-    container_name: Eventify.Redis
+  booking.redis:
+    container_name: Booking.Redis
     restart: always
     ports:
       - 6379:6379
@@ -46,7 +46,6 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Host=eventcatalog.database;Database=eventcatalog;Username=postgres;Password=postgres;Trust Server Certificate=true
-      - ConnectionStrings__Cache=eventify.redis:6379
     ports:
       - "5000:8080"
       - "5050:8081"
@@ -55,5 +54,19 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     depends_on:
       - eventcatalog.database
-      - eventify.redis
 
+
+  booking.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__Cache=booking.redis:6379
+    ports:
+      - "6000:8080"
+      - "6050:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    depends_on:
+      - booking.redis

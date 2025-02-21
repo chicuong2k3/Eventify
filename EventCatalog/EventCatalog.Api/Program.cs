@@ -40,7 +40,20 @@ builder.Services.AddApiVersioning(options =>
      //options.ApiVersionReader = new HeaderApiVersionReader("api-version");
  });
 
+// Exception Handling
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 // Persistence
 var dbConnectionString = builder.Configuration.GetConnectionString("Database") ?? throw new InvalidOperationException("'Database' connection string cannot be null or empty.");
@@ -65,24 +78,14 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 //    HttpMethod.Get,
 //    "key-cloak");
 
-// Exception Handling
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-builder.Services.AddProblemDetails();
+
 
 builder.Services.AddMediatR(configure =>
 {
     configure.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
 });
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-    });
-});
+
 
 var app = builder.Build();
 
